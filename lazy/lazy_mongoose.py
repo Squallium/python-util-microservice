@@ -50,14 +50,19 @@ class LazyMongoose:
     def __init__(self, params) -> None:
         self.project, self.module = params
 
-        self.subdir_folder = ''  # core
         self.schemes_folder = None
         self.models_folder = None
         self.conns_folder = None
 
+        self.dep_schemes_folder = None
+        self.dep_models_folder = None
+
         self.schemes = {}
         self.models = {}
         self.interfaces = []
+
+        self.dep_schemes = {}
+        self.dep_models = {}
 
         self.schema_cap_names = {}
         self.cap_name_schemas = {}
@@ -66,7 +71,11 @@ class LazyMongoose:
         self.connections = {}
 
     def run_job(self):
-        core_folder = os.path.join(self.PROJECTS[self.project], self.subdir_folder)
+        # self.scan_folder('base')
+        self.scan_folder('', 'base')
+
+    def scan_folder(self, subdir_folder, dep=None):
+        core_folder = os.path.join(self.PROJECTS[self.project], subdir_folder)
         self.schemes_folder = os.path.join(core_folder, 'schemas') + '/'
         self.models_folder = os.path.join(core_folder, 'models')
         self.conns_folder = os.path.join(core_folder, 'connections')
@@ -81,6 +90,19 @@ class LazyMongoose:
                 if f.endswith('.ts'):
                     self.models[os.path.basename(f).replace('.model.ts', '')] = os.path.join(root, f)
 
+        if dep:
+            self.dep_schemes_folder = os.path.join(core_folder, dep, 'schemas') + '/'
+            for root, dirs, files in os.walk(self.dep_schemes_folder, topdown=True):
+                for f in files:
+                    if f.endswith('.ts'):
+                        self.dep_schemes[os.path.basename(f).replace('.schema.ts', '')] = os.path.join(root, f)
+
+            self.dep_models_folder = os.path.join(core_folder, dep, 'models')
+            for root, dirs, files in os.walk(self.dep_models_folder, topdown=True):
+                for f in files:
+                    if f.endswith('.ts'):
+                        self.dep_models[os.path.basename(f).replace('.model.ts', '')] = os.path.join(root, f)
+
         # limpiamos la carpeta temporal
         try:
             shutil.rmtree(self.OUTPUT_BASE_PATH, True)
@@ -90,19 +112,21 @@ class LazyMongoose:
 
         for model_name in self.schemes.keys():
             self.analyze_model(model_name)
+        for model_name in self.dep_schemes.keys():
+            self.analyze_model(model_name)
         for model_name in self.schemes.keys():
             self.interfaces = []
             gen_model = self.generate_model(model_name)
             self.write_new_model(model_name, gen_model)
         for conn_name in self.connections:
             self.write_connection(conn_name)
-            self.write_configurations()
+            self.write_configurations(subdir_folder)
         # model_name = 'module'
         # gen_model = self.generate_model(model_name)
         # self.write_new_model(model_name, gen_model)
         # self.write_connection(model_name)
 
-    def write_configurations(self):
+    def write_configurations(self, subdir_folder):
         new_file = os.path.join(self.OUTPUT_BASE_PATH, f'app.ts')
         original_file = os.path.join(self.PROJECTS[self.project], f'app.ts')
 
@@ -112,7 +136,7 @@ class LazyMongoose:
 
         for conn_name in self.connections.keys():
             conn_class = f'{conn_name[0].upper()}{conn_name[1:]}'
-            conn_path = os.path.join('.', self.subdir_folder, f'connections/{conn_name}.conn')
+            conn_path = os.path.join('.', subdir_folder, f'connections/{conn_name}.conn')
 
             lines_import.append(f'import {"{" + conn_class + "Conn}"} from "{conn_path}";')
             lines_promises.append(f'{conn_class}Conn,')
@@ -232,7 +256,7 @@ class LazyMongoose:
         self.__lazy_writer(original_file, new_file, lazy_blocks, model_name)
 
     def analyze_model(self, model_name):
-        with open(self.schemes[model_name], 'r') as schema_file:
+        with open(self.__schemes(model_name), 'r') as schema_file:
             for line in schema_file:
                 m_schema = re.match(self.RE_SCHEMA_NAME, line)
                 if m_schema:
@@ -245,6 +269,12 @@ class LazyMongoose:
                         self.cap_name_schemas[schema_cap_name] = model_name
                         self.schema_classes[model_name] = f'{schema_cap_name}Schema'
                         self.model_classes[model_name] = f'I{schema_cap_name}'
+
+    def __schemes(self, model_name):
+        if model_name in self.dep_schemes.keys():
+            return self.dep_schemes[model_name]
+        else:
+            return self.schemes[model_name]
 
     def generate_model(self, model_name):
         gen_model = {
@@ -343,15 +373,25 @@ class LazyMongoose:
                     if conn_name != current_conn_name:
                         gen_model[self.IMPORTS].append(
                             f'import {"{" + result + "}"} from "../{conn_name}/{model_name}.model";')
+
                     else:
-                        gen_model[self.IMPORTS].append(f'import {"{" + result + "}"} from "./{model_name}.model";')
+                        if self.__is_dep_model(model_name):
+                            gen_model[self.IMPORTS].append(f'import {"{" + result + "}"} from "../../base/models/{model_name}.model";')
+                        else:
+                            gen_model[self.IMPORTS].append(f'import {"{" + result + "}"} from "./{model_name}.model";')
                 else:
-                    gen_model[self.IMPORTS].append(f'import {"{" + result + "}"} from "../{model_name}.model";')
+                    if self.__is_dep_model(model_name):
+                        gen_model[self.IMPORTS].append(f'import {"{" + result + "}"} from "../../base/models/{model_name}.model";')
+                    else:
+                        gen_model[self.IMPORTS].append(f'import {"{" + result + "}"} from "../{model_name}.model";')
 
         if is_array:
             result = f'[{result}]'
 
         return result
+
+    def __is_dep_model(self, model_name):
+        return model_name.lower() in self.dep_models.keys()
 
     def __type_model_name(self, type):
         if type.lower() in self.schemes.keys():
@@ -360,9 +400,9 @@ class LazyMongoose:
             return self.cap_name_schemas[type]
 
     def __scheme_sub_folder(self, model_name):
-        full_path = self.schemes[model_name.lower()]
+        full_path = self.__schemes(model_name.lower())
         basename = os.path.basename(full_path)
-        return full_path.replace(self.schemes_folder, '').replace(basename, '')
+        return full_path.replace(self.schemes_folder, '').replace(self.dep_schemes_folder, '').replace(basename, '')
 
     def __connection_name(self, model_name):
         return self.__scheme_sub_folder(model_name).replace('/', '')
