@@ -1,0 +1,3 @@
+projects:
+  vine_micro:
+    migrations_endpoint: http://localhost:3001/migrations
