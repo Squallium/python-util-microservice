@@ -1,0 +1,2 @@
+class BeCarefullyTouchingProEnvironmentException(Exception):
+    pass

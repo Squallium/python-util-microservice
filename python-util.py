@@ -3,11 +3,13 @@ import os
 import sys
 
 from lazy.lazy import Lazy
+from migrations.migrations import Migrations
 
 
 class PythonUtil:
     MODULES = {
         "lazy": Lazy,
+        "migrations": Migrations
     }
 
     def __init__(self):
