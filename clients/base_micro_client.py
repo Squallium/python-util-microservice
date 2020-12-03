@@ -53,3 +53,16 @@ class BaseMicroClient:
         else:
             if response.payload['code'] != 11000:
                 logging.error(response.payload)
+
+    def delete_migration_items(self, database: str, collection: str):
+        endpoint = os.path.join(ConfigService().migrations_endpoint(self.env), database, collection)
+        headers = {'Content-type': 'application/json'}
+
+        rsp = requests.delete(endpoint, json={}, headers=headers)
+
+        response = Response.from_request(rsp)
+
+        if response.is_ok:
+            logging.info(response.payload)
+        else:
+            logging.error(response.payload)

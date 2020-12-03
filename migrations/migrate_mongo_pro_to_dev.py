@@ -44,7 +44,7 @@ class MigrateMongoProToDev(Migrate):
 
         if migrated:
             if self.prune:
-                self.bmc.delete_items(database, collection)
+                self.bmc.delete_migration_items(database, collection)
             self.bmc.save_migration_items(database, collection, migrated)
 
     def __should_be_migrated(self, collection, item):
