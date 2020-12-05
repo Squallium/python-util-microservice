@@ -29,7 +29,7 @@ class LazyMongoose:
 
     IMPORT_DOCUMENT = 'import {Document} from "mongoose";'
 
-    DEV_OPS_PATH = '/Users/brefoyo/DevOps'
+    DEV_OPS_PATH = '/Users/brefoyo/DevOps/production'
     FRONTEND_PROJECT_PATH = os.path.join(DEV_OPS_PATH, 'metronic')
 
     PROJECTS = {
