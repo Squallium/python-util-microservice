@@ -3,8 +3,8 @@ import os
 
 import requests
 
-from services.config_service import ConfigService
-from utils.response import BaseModel, Response
+from microserviceutil.services.config_service import ConfigService
+from microserviceutil.utils.response import BaseModel, Response
 
 
 class MigrationModel(BaseModel):

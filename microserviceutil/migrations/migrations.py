@@ -1,12 +1,12 @@
 import logging
 
-from lazy.lazy_mongoose import LazyMongoose
+from microserviceutil.migrations.migrate_mongo_pro_to_dev import MigrateMongoProToDev
 
 
-class Lazy:
+class Migrations:
     try:
         JOBS = {
-            "mongoose": LazyMongoose
+            "mongo_pro_to_dev": MigrateMongoProToDev
         }
 
         def __init__(self, args):

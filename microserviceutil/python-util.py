@@ -2,8 +2,8 @@ import logging
 import os
 import sys
 
-from lazy.lazy import Lazy
-from migrations.migrations import Migrations
+from microserviceutil.lazy.lazy import Lazy
+from microserviceutil.migrations.migrations import Migrations
 
 
 class PythonUtil:

@@ -1,9 +1,9 @@
 import logging
 import os
 
-from clients.base_micro_client import BaseMicroClient
-from migrations.migrate import Migrate
-from services.config_service import ConfigService
+from microserviceutil.clients.base_micro_client import BaseMicroClient
+from microserviceutil.migrations.migrate import Migrate
+from microserviceutil.services.config_service import ConfigService
 
 
 class MigrateMongoProToDev(Migrate):
