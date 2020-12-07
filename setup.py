@@ -1,5 +1,11 @@
 from setuptools import find_packages, setup
 
+install_requires = [
+    'google-api-python-client>=1.12.8',
+    'google-auth-httplib2>=0.0.4',
+    'google-auth-oauthlib>=0.4.2'
+]
+
 version = "1.0.0"
 
 setup(
@@ -9,4 +15,5 @@ setup(
     description='Python Utilities for the Microservices',
     author='Borja Reefoyo Ruiz',
     url='https://github.com/Squallium/python-util-microservice',
+    install_requires=install_requires,
 )

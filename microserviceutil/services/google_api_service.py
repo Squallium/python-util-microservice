@@ -12,35 +12,50 @@ class GoogleApiService(metaclass=BaseService):
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
-    # The ID and range of a sample spreadsheet.
-    SAMPLE_SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
-    SAMPLE_RANGE_NAME = 'Class Data!A2:E'
-
     def __init__(self) -> None:
         super().__init__()
 
-    def main(self):
-        """Shows basic usage of the Sheets API.
-        Prints values from a sample spreadsheet.
-        """
-        secret_file = os.path.join(Path.home(),'.credentials', 'client_secret.json')
+        # services
+        self.__sheets_service = None
+
+        # initialize google api with credentials
+        secret_file = os.path.join(Path.home(), '.credentials', 'client_secret.json')
         credentials = service_account.Credentials.from_service_account_file(secret_file, scopes=self.SCOPES)
 
-        service = build('sheets', 'v4', credentials=credentials)
+        # set the sheet service instance
+        self.__sheets_service = build('sheets', 'v4', credentials=credentials)
 
-        # Call the Sheets API
-        sheet = service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=self.SAMPLE_SPREADSHEET_ID,
-                                    range=self.SAMPLE_RANGE_NAME).execute()
+    def get_range(self, spreadsheet_id, range_name):
+        result = self.__sheets_service.spreadsheets().values().get(
+            spreadsheetId=spreadsheet_id, range=range_name).execute()
         values = result.get('values', [])
 
-        if not values:
-            print('No data found.')
-        else:
-            print('Name, Major:')
-            for row in values:
-                # Print columns A and E, which correspond to indices 0 and 4.
-                print('%s, %s' % (row[0], row[4]))
+        return values
+
+    def set_range(self, spreadsheet_id, range_name, body):
+        result = self.__sheets_service.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_id, range=range_name,
+            valueInputOption='USER_ENTERED', body=body).execute()
+
+        print(result)
+
+    def clear_range(self, spreadsheet_id, range_name):
+        clear_values_request_body = {
+            # TODO: Add desired entries to the request body.
+        }
+
+        result = self.__sheets_service.spreadsheets().values().clear(
+            spreadsheetId=spreadsheet_id, range=range_name, body=clear_values_request_body).execute()
+
+    def get_sheets(self, spreadsheet_id):
+        result = []
+
+        sheet_metadata = self.__sheets_service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+        sheets = sheet_metadata.get('sheets', '')
+        for sheet in sheets:
+            result.append(sheet.get("properties", {}))
+
+        return result
 
 
 if __name__ == '__main__':
