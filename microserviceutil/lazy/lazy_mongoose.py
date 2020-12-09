@@ -119,6 +119,7 @@ class LazyMongoose:
             gen_model = self.generate_model(model_name)
             self.write_new_model(model_name, gen_model)
         for conn_name in self.connections:
+            self.connections[conn_name].sort()
             self.write_connection(conn_name)
             self.write_configurations(subdir_folder)
         # model_name = 'module'
