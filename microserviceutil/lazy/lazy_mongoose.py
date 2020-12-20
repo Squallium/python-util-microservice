@@ -29,7 +29,7 @@ class LazyMongoose:
 
     IMPORT_DOCUMENT = 'import {Document} from "mongoose";'
 
-    DEV_OPS_PATH = '/Users/brefoyo/DevOps/production'
+    DEV_OPS_PATH = '/Users/brefoyo/DevOps'
     FRONTEND_PROJECT_PATH = os.path.join(DEV_OPS_PATH, 'metronic')
 
     PROJECTS = {
@@ -129,7 +129,7 @@ class LazyMongoose:
 
     def write_configurations(self, subdir_folder):
         new_file = os.path.join(self.OUTPUT_BASE_PATH, f'app.ts')
-        original_file = os.path.join(self.PROJECTS[self.project], f'app.ts')
+        original_file = os.path.join(self.PROJECTS[self.project], subdir_folder, f'app.ts')
 
         lines_import = []
         lines_promises = []
@@ -137,7 +137,8 @@ class LazyMongoose:
 
         for conn_name in self.connections.keys():
             conn_class = f'{conn_name[0].upper()}{conn_name[1:]}'
-            conn_path = os.path.join('.', subdir_folder, f'connections/{conn_name}.conn')
+            # conn_path = os.path.join('.', subdir_folder, f'connections/{conn_name}.conn')
+            conn_path = os.path.join('.', f'connections/{conn_name}.conn')
 
             lines_import.append(f'import {"{" + conn_class + "Conn}"} from "{conn_path}";')
             lines_promises.append(f'{conn_class}Conn,')
@@ -403,7 +404,12 @@ class LazyMongoose:
     def __scheme_sub_folder(self, model_name):
         full_path = self.__schemes(model_name.lower())
         basename = os.path.basename(full_path)
-        return full_path.replace(self.schemes_folder, '').replace(self.dep_schemes_folder, '').replace(basename, '')
+
+        result = full_path.replace(self.schemes_folder, '')
+        if self.dep_schemes_folder:
+            result = result.replace(self.dep_schemes_folder, '')
+        result = result.replace(basename, '')
+        return result
 
     def __connection_name(self, model_name):
         return self.__scheme_sub_folder(model_name).replace('/', '')
