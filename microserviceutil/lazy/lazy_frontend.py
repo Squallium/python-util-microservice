@@ -19,11 +19,10 @@ class LazyFrontend:
     IGNORED_FILES = ['.DS_Store']
     IGNORED_EXTENSIONS = []
 
-    INTRANET_PROJECT_PATH = '/Users/brefoyo/DevOps/genera-intranet'
-    FRONTEND_PROJECT_PATH = os.path.join(INTRANET_PROJECT_PATH, 'metronic')
-    INTRANET_PROJECT_TEMP_PATH = '/Users/brefoyo/DevOps/temp/genera-intranet'
+    FRONTEND_PROJECT_PATH = '/Users/borja.refoyo/Personal/frontend-macroservice'
+    INTRANET_PROJECT_TEMP_PATH = '/Users/borja.refoyo/Personal/temp/genera-intranet'
     FRONTEND_PROJECT_TEMP_PATH = os.path.join(INTRANET_PROJECT_TEMP_PATH, 'metronic')
-    NEW_VERSION_PROJECT_PATH = '/Users/brefoyo/DevOps/metronic_v7.0.0/theme/angular/demo1'
+    NEW_VERSION_PROJECT_PATH = '/Users/borja.refoyo/Personal/temporal/metronic_v7.1.8/theme/angular/demo1'
 
     BEGIN_COMMIT = '94b05261f889ce8eec62db59d134e2c3bb20ea6a'
     END_COMMIT = '5e9a533b88731942f956a3a8c11e7fafe4706cca'
@@ -36,9 +35,9 @@ class LazyFrontend:
 
     def run_job(self):
         pass
-        # self.fix_crlf_to_lf()
+        self.fix_crlf_to_lf()
         # self.update_version()
-        self.copy_modified_files()
+        # self.copy_modified_files()
 
     def calculate_modified_files(self):
         logging.warning('')
@@ -73,7 +72,8 @@ class LazyFrontend:
     def fix_crlf_to_lf(self):
         files = self.__list_folder_files(self.NEW_VERSION_PROJECT_PATH)
         for file in files:
-            if file.lower().endswith(('.ts', '.html', '.scss', '.svg', '.css', '.js', '.txt', '.htaccess')):
+            if file.lower().endswith(('.ts', '.html', '.scss', '.svg', '.css', '.js', '.txt', '.htaccess', '.json',
+                                      'browserslist', '.md')):
                 self.file_from_crlf_to_lf(file)
 
     def file_from_crlf_to_lf(self, file_path):
