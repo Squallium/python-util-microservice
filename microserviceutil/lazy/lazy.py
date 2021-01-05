@@ -1,12 +1,14 @@
 import logging
 
+from microserviceutil.lazy.lazy_frontend import LazyFrontendUpdater
 from microserviceutil.lazy.lazy_mongoose import LazyMongoose
 
 
 class Lazy:
     try:
         JOBS = {
-            "mongoose": LazyMongoose
+            "mongoose": LazyMongoose,
+            "frontend": LazyFrontendUpdater
         }
 
         def __init__(self, args):
