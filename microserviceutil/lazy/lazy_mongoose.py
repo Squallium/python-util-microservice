@@ -29,7 +29,7 @@ class LazyMongoose:
 
     IMPORT_DOCUMENT = 'import {Document} from "mongoose";'
 
-    DEV_OPS_PATH = '/Users/brefoyo/DevOps'
+    DEV_OPS_PATH = '/Users/borja.refoyo/Personal'
     FRONTEND_PROJECT_PATH = os.path.join(DEV_OPS_PATH, 'metronic')
 
     PROJECTS = {
@@ -71,8 +71,8 @@ class LazyMongoose:
         self.connections = {}
 
     def run_job(self):
-        # self.scan_folder('base')
-        self.scan_folder('', 'base')
+        self.scan_folder('base')
+        # self.scan_folder('', 'base')
 
     def scan_folder(self, subdir_folder, dep=None):
         core_folder = os.path.join(self.PROJECTS[self.project], subdir_folder)
