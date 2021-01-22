@@ -34,6 +34,7 @@ class LazyMongoose:
 
     PROJECTS = {
         'vine': os.path.join(DEV_OPS_PATH, 'vine-microservice'),
+        'user': os.path.join(DEV_OPS_PATH, 'user-microservice'),
     }
 
     RE_SCHEMA_NAME = ".*const\s+(\w+)Schema"
