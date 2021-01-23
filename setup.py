@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     version=version,
     description='Python Utilities for the Microservices',
-    author='Borja Reefoyo Ruiz',
+    author='Borja Refoyo Ruiz',
     url='https://github.com/Squallium/python-util-microservice',
     install_requires=install_requires,
 )
