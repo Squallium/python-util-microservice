@@ -29,12 +29,14 @@ class LazyMongoose:
 
     IMPORT_DOCUMENT = 'import {Document} from "mongoose";'
 
-    DEV_OPS_PATH = '/Users/borja.refoyo/Personal'
-    FRONTEND_PROJECT_PATH = os.path.join(DEV_OPS_PATH, 'metronic')
+    PERSONAL_PATH = '/Users/borja.refoyo/Personal'
+    DEV_OPS_PATH = '/Users/borja.refoyo/DevOps'
+    FRONTEND_PROJECT_PATH = os.path.join(PERSONAL_PATH, 'metronic')
 
     PROJECTS = {
-        'vine': os.path.join(DEV_OPS_PATH, 'vine-microservice'),
-        'user': os.path.join(DEV_OPS_PATH, 'user-microservice'),
+        'vine': os.path.join(PERSONAL_PATH, 'vine-microservice'),
+        'user': os.path.join(PERSONAL_PATH, 'user-microservice'),
+        'abs': os.path.join(DEV_OPS_PATH, 'abs-backend'),
     }
 
     RE_SCHEMA_NAME = ".*const\s+(\w+)Schema"
@@ -72,8 +74,9 @@ class LazyMongoose:
         self.connections = {}
 
     def run_job(self):
-        self.scan_folder('base')
+        # self.scan_folder('base')
         # self.scan_folder('', 'base')
+        self.scan_folder('')
 
     def scan_folder(self, subdir_folder, dep=None):
         core_folder = os.path.join(self.PROJECTS[self.project], subdir_folder)
