@@ -75,8 +75,8 @@ class LazyMongoose:
 
     def run_job(self):
         # self.scan_folder('base')
-        # self.scan_folder('', 'base')
-        self.scan_folder('')
+        self.scan_folder('', 'base')
+        # self.scan_folder('')
 
     def scan_folder(self, subdir_folder, dep=None):
         core_folder = os.path.join(self.PROJECTS[self.project], subdir_folder)
