@@ -9,23 +9,22 @@ from git import Repo
 
 
 class LazyFrontend:
-    FULL_LOG_INFO = False
-    WRITE_MODE = False
+    FULL_LOG_INFO = True
+    WRITE_MODE = True
 
     WINDOWS_LINE_ENDING = b'\r\n'
     UNIX_LINE_ENDING = b'\n'
 
-    IGNORED_FOLDERS = ['node_modules', '.idea']
+    IGNORED_FOLDERS = ['node_modules', '.idea', '.git']
     IGNORED_FILES = ['.DS_Store']
     IGNORED_EXTENSIONS = []
 
     FRONTEND_PROJECT_PATH = '/Users/borja.refoyo/Personal/frontend-macroservice'
-    INTRANET_PROJECT_TEMP_PATH = '/Users/borja.refoyo/Personal/temp/genera-intranet'
-    FRONTEND_PROJECT_TEMP_PATH = os.path.join(INTRANET_PROJECT_TEMP_PATH, 'metronic')
-    NEW_VERSION_PROJECT_PATH = '/Users/borja.refoyo/Personal/temporal/metronic_v7.1.8/theme/angular/demo1'
+    FRONTEND_PROJECT_TEMP_PATH = '/Users/borja.refoyo/Personal/temporal/frontend-macroservice'
+    NEW_VERSION_PROJECT_PATH = '/Users/borja.refoyo/Personal/temporal/metronic_v7.2.3/theme/angular/demo1'
 
-    BEGIN_COMMIT = '94b05261f889ce8eec62db59d134e2c3bb20ea6a'
-    END_COMMIT = '5e9a533b88731942f956a3a8c11e7fafe4706cca'
+    LAST_COMMIT = '6aeb065d2e88a68ac8cdc288ddb78027386ddfa1'
+    FIRST_COMMIT = '22040824d2cb5ab57b5cc9ac084ad24a39c7b70f'
 
     def __init__(self, params) -> None:
         # atributos de la clase
@@ -34,10 +33,9 @@ class LazyFrontend:
         self.modified_files = []
 
     def run_job(self):
-        pass
         self.fix_crlf_to_lf()
         # self.update_version()
-        # self.copy_modified_files()
+        self.copy_modified_files()
 
     def calculate_modified_files(self):
         logging.warning('')
@@ -46,13 +44,14 @@ class LazyFrontend:
         logging.warning('=================================================================')
         logging.warning('')
 
-        logging.info(Repo(self.INTRANET_PROJECT_TEMP_PATH).active_branch.name)
-        commits = self.__commits_between_two_commits(self.BEGIN_COMMIT, self.END_COMMIT)
+        logging.info(Repo(self.FRONTEND_PROJECT_TEMP_PATH).active_branch.name)
+        commits = self.__commits_between_two_commits(self.LAST_COMMIT, self.FIRST_COMMIT)
         for commit in commits:
             if not commit.message.startswith('[IGNORE]'):
                 for file in commit.stats.files:
-                    if file.startswith('metronic/'):
-                        self.modified_files.append(file.replace('metronic/', ''))
+                    # if file.startswith('metronic/'):
+                    #     self.modified_files.append(file.replace('metronic/', ''))
+                    self.modified_files.append(file)
         self.modified_files = list(dict.fromkeys(self.modified_files))
         logging.info(self.modified_files)
 
@@ -195,7 +194,7 @@ class LazyFrontend:
                     if self.WRITE_MODE:
                         os.remove(prev_file)
 
-    def __extract_version_files(self, project_path_folder, prefix, files_dict, replacers=[], movements={}):
+    def __extract_version_files(self, project_path_folder, prefix, files_dict):  # , replacers=[], movements={}):
         files = self.__list_folder_files(project_path_folder)
         for file in files:
             basename = os.path.basename(file)
@@ -203,17 +202,17 @@ class LazyFrontend:
             if all(x not in rel_path for x in self.__ignored_folders()):
                 if all(not basename.endswith(x) for x in self.IGNORED_EXTENSIONS):
                     if all(x not in basename for x in self.IGNORED_FILES):
-                        for rep in replacers:
-                            rel_path = os.path.join(*rel_path.replace(rep, '').split('/'))
-                        if basename not in files_dict.keys():
-                            file_id = os.path.join(rel_path, basename)
-                            if movements:
-                                movement = self.__find_movement_in_dict(rel_path, movements)
-                                if movement:
-                                    file_id = os.path.join(movement, basename)
-                                else:
-                                    logging.error(f'Movimiento no controlado par el fichero: {file}')
-                                    sys.exit(1)
+                        # for rep in replacers:
+                        #     rel_path = os.path.join(*rel_path.replace(rep, '').split('/'))
+                        file_id = os.path.join(rel_path, basename)
+                        if file_id not in files_dict.keys():
+                            # if movements:
+                            #     movement = self.__find_movement_in_dict(rel_path, movements)
+                            #     if movement:
+                            #         file_id = os.path.join(movement, basename)
+                            #     else:
+                            #         logging.error(f'Movimiento no controlado par el fichero: {file}')
+                            #         sys.exit(1)
 
                             files_dict[file_id] = {
                                 'basename': basename,
@@ -229,7 +228,7 @@ class LazyFrontend:
     def __commits_between_two_commits(self, begin_commit, end_commit):
         result = []
 
-        repo = Repo(self.INTRANET_PROJECT_PATH, search_parent_directories=True)
+        repo = Repo(self.FRONTEND_PROJECT_TEMP_PATH, search_parent_directories=True)
 
         ready = False
         for commit in repo.iter_commits():
