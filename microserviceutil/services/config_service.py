@@ -23,7 +23,7 @@ class ConfigService(metaclass=BaseService):
     def __load_cfg(self, env=None):
         env = env if env else self.__default_env
         try:
-            with open("microserviceutil/configs/{0}/config.yml".format(env), 'r') as ymlfile:
+            with open("./configs/{0}/config.yml".format(env), 'r') as ymlfile:
                 self.__configs[env] = yaml.load(ymlfile, Loader=yaml.FullLoader)
         except FileNotFoundError as fnfe:
             BaseError().terminate(BaseError.CONFIG_FILE_NOT_FOUND)
