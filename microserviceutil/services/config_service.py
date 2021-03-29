@@ -15,10 +15,10 @@ class ConfigService(metaclass=BaseService):
 
         # env vars
         self.__default_env = os.environ.get('ENV', 'dev')
+        self.__project_id = os.environ.get('PROJECT_ID', None)
 
         # attributes
         self.__configs = {}
-        self._project_id = None
 
     def __load_cfg(self, env=None):
         env = env if env else self.__default_env
@@ -34,16 +34,11 @@ class ConfigService(metaclass=BaseService):
             self.__load_cfg(env)
         return self.__configs[env]
 
-    def __project_cfg(self, env=None):
-        return self.__cfg(env)[ConfigService.PROJECTS][self.project_id]
+    def __project_cfg(self, env=None, project_id=None):
+        return self.__cfg(env)[ConfigService.PROJECTS][self.project_id(project_id)]
 
-    @property
-    def project_id(self):
-        return self._project_id
-
-    @project_id.setter
-    def project_id(self, value):
-        self._project_id = value
+    def project_id(self, project_id=None):
+        return project_id if project_id else self.__project_id
 
     def migrations_endpoint(self, env=None):
-        return self.__project_cfg(env)[self.MIGRATIONS_ENDPOINT]
+        return self.__project_cfg(env, 'vine_micro')[self.MIGRATIONS_ENDPOINT]
