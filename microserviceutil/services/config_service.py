@@ -1,3 +1,4 @@
+import logging
 import os
 
 import yaml
@@ -34,11 +35,13 @@ class ConfigService(metaclass=BaseService):
             self.__load_cfg(env)
         return self.__configs[env]
 
-    def __project_cfg(self, env=None, project_id=None):
-        return self.__cfg(env)[ConfigService.PROJECTS][self.project_id(project_id)]
+    def _project_cfg(self, env=None, project_id=None):
+        logging.info(self.__cfg(env)[ConfigService.PROJECTS])
+        logging.info(self._project_id(project_id))
+        return self.__cfg(env)[ConfigService.PROJECTS][self._project_id(project_id)]
 
-    def project_id(self, project_id=None):
+    def _project_id(self, project_id=None):
         return project_id if project_id else self.__project_id
 
     def migrations_endpoint(self, env=None):
-        return self.__project_cfg(env, 'vine_micro')[self.MIGRATIONS_ENDPOINT]
+        return self._project_cfg(env, 'vine_micro')[self.MIGRATIONS_ENDPOINT]
