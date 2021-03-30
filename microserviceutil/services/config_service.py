@@ -36,8 +36,6 @@ class ConfigService(metaclass=BaseService):
         return self.__configs[env]
 
     def _project_cfg(self, env=None, project_id=None):
-        logging.info(self.__cfg(env)[ConfigService.PROJECTS])
-        logging.info(self._project_id(project_id))
         return self.__cfg(env)[ConfigService.PROJECTS][self._project_id(project_id)]
 
     def _project_id(self, project_id=None):
