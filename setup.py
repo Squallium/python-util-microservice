@@ -3,7 +3,8 @@ from setuptools import find_packages, setup
 install_requires = [
     'google-api-python-client>=1.12.8',
     'google-auth-httplib2>=0.0.4',
-    'google-auth-oauthlib>=0.4.2'
+    'google-auth-oauthlib>=0.4.2',
+    'PyYAML==5.3.1'
 ]
 
 version = "1.0.0"
