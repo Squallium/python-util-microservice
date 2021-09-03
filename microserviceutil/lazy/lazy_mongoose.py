@@ -35,6 +35,8 @@ class LazyMongoose:
 
     PROJECTS = {
         'vine': os.path.join(PERSONAL_PATH, 'vine-microservice'),
+        'template': os.path.join(PERSONAL_PATH, 'template-microservice'),
+        'lego': os.path.join(PERSONAL_PATH, 'lego-microservice'),
         'user': os.path.join(PERSONAL_PATH, 'user-microservice'),
         'abs': os.path.join(DEV_OPS_PATH, 'abs-backend'),
     }
@@ -74,8 +76,8 @@ class LazyMongoose:
         self.connections = {}
 
     def run_job(self):
-        # self.scan_folder('base')
-        self.scan_folder('', 'base')
+        self.scan_folder('base')
+        # self.scan_folder('', 'base')
         # self.scan_folder('')
 
     def scan_folder(self, subdir_folder, dep=None):
