@@ -37,8 +37,11 @@ class LazyMongoose:
         'vine': os.path.join(PERSONAL_PATH, 'vine-microservice'),
         'template': os.path.join(PERSONAL_PATH, 'template-microservice'),
         'lego': os.path.join(PERSONAL_PATH, 'lego-microservice'),
+        'cortex': os.path.join(PERSONAL_PATH, 'cortex-microservice'),
+        'comic': os.path.join(PERSONAL_PATH, 'comic-microservice'),
         'user': os.path.join(PERSONAL_PATH, 'user-microservice'),
         'abs': os.path.join(DEV_OPS_PATH, 'abs-backend'),
+        'devops-admin': os.path.join(DEV_OPS_PATH, 'devops-admin'),
     }
 
     RE_SCHEMA_NAME = ".*const\s+(\w+)Schema"
@@ -76,9 +79,9 @@ class LazyMongoose:
         self.connections = {}
 
     def run_job(self):
-        self.scan_folder('base')
+        # self.scan_folder('base')
         # self.scan_folder('', 'base')
-        # self.scan_folder('')
+        self.scan_folder('')
 
     def scan_folder(self, subdir_folder, dep=None):
         core_folder = os.path.join(self.PROJECTS[self.project], subdir_folder)
